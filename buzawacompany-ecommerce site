@@ -1,0 +1,178 @@
+import React, { useState } from 'react';
+import { BrowserRouter as Router, Route, Routes, Link } from 'react-router-dom';
+import './App.css';
+
+// tese  will serve  as side  links  later from  which  each  will  have  a  drop down navigation  links 
+import HomePage from './HomePage';
+import Page1 from './Page1';
+import Page2 from './Page2';
+import Page3 from './Page3';
+import Page4 from './Page4';
+import Page5 from './Page5';
+import PageSeven from './PageSeven';
+
+// Main App component
+const App = () => {
+  const [showLogin, setShowLogin] = useState(false); 
+  const [showSignup, setShowSignup] = useState(false);
+  const [activeTopic, setActiveTopic] = useState(null);
+  const [profileMenuVisible, setProfileMenuVisible] = useState(false);
+
+  // Toggle functions for login/signup
+  const toggleLogin = () => {
+    setShowLogin(true);
+    setShowSignup(false);
+  };
+
+  const toggleSignup = () => {
+    setShowLogin(false);
+    setShowSignup(true);
+  };
+
+  // Toggle profile menu visibility
+  const toggleProfileMenu = () => {
+    setProfileMenuVisible(!profileMenuVisible);
+  };
+
+  // Video URLs for topics
+  const videoURLs = {
+    Travel: 'https://www.youtube.com/embed/3pWk8c3w2B4',
+    Fitness: 'https://www.youtube.com/embed/2XnMx5bqWWw',
+    Food: 'https://www.youtube.com/embed/1B6Y5VqHT7o',
+    Music: 'https://www.youtube.com/embed/dQw4w9WgXcQ',
+    Technology: 'https://www.youtube.com/embed/ZZ5LpwO-An4',
+    Science: 'https://www.youtube.com/embed/FJbN9GjqyQU',
+    Art: 'https://www.youtube.com/embed/yRYZylXw9Cw',
+    Health: 'https://www.youtube.com/embed/fKdQ2h1eXpo',
+    Gaming: 'https://www.youtube.com/embed/P1Yu_vgQ5g8',
+    Movies: 'https://www.youtube.com/embed/oHg5SJYRHA0',
+    Nature: 'https://www.youtube.com/embed/vzv1Jw_R8cg',
+    Culture: 'https://www.youtube.com/embed/cZX0h07U4rA',
+    Sports: 'https://www.youtube.com/embed/g4Z_Hu5qKSU',
+    Fashion: 'https://www.youtube.com/embed/7wQ8WfDJtzg',
+    DIY: 'https://www.youtube.com/embed/KFV4rR6Qk0g'
+  };
+
+  const topics = Object.keys(videoURLs);
+
+  // Handle topic selection
+  const handleTopicClick = (topic) => {
+    setActiveTopic(topic);
+  };
+
+  // Header Component (Modularized Inside App.js)
+  const Header = () => (
+    <header>
+      <div className="container">
+        {/* Navigation Links for Topics */}
+        <ul className="nav-links">
+          {topics.map((topic, index) => (
+            <li key={index}>
+              <a href={`#section${index + 1}`} onClick={() => handleTopicClick(topic)}>
+                {topic}
+              </a>
+            </li>
+          ))}
+        </ul>
+      </div>
+
+      {/* Profile Icon */}
+      <div className="profile-container">
+        <div
+          className="profile-icon"
+          onClick={toggleProfileMenu}
+          onMouseEnter={toggleProfileMenu}
+          onMouseLeave={() => setProfileMenuVisible(false)}
+        >
+          <span>👤</span> {/* Profile Icon */}
+        </div>
+        {profileMenuVisible && (
+          <div className="profile-menu">
+            <ul>
+              <li><Link to="/profile">My Account</Link></li>
+              <li><Link to="/settings">Settings</Link></li>
+              <li><Link to="/logout">Log Out</Link></li>
+            </ul>
+          </div>
+        )}
+      </div>
+    </header>
+  );
+
+  return (
+    <Router>
+      <div className="app-container">
+        {/* Header Section */}
+        <Header />
+
+        {/* Main Content Container */}
+        <div className="main-content">
+          <Routes>
+            <Route path="/" element={
+              <div>
+                <main>
+                  <div className="intro">
+                    <h1>What will you like today?</h1>
+                    <p>Our app is your best choice.</p>
+                    <button onClick={toggleLogin}>Stay with us!</button>
+
+                    <div className="login-signup">
+                      <h2>Login or Sign Up to Upload Videos</h2>
+                      <button onClick={toggleLogin}>Login</button>
+                      <button onClick={toggleSignup}>Sign Up</button>
+
+                      {showLogin && (
+                        <div id="loginForm">
+                          <h3>Login</h3>
+                          <input type="text" placeholder="Username" required />
+                          <input type="password" placeholder="Password" required />
+                          <button>Login</button>
+                          <p>Don't have an account? <a href="#" onClick={toggleSignup}>Sign Up</a></p>
+                        </div>
+                      )}
+
+                      {showSignup && (
+                        <div id="signupForm">
+                          <h3>Sign Up</h3>
+                          <input type="text" placeholder="Username" required />
+                          <input type="password" placeholder="Password" required />
+                          <button>Sign Up</button>
+                          <p>Already have an account? <a href="#" onClick={toggleLogin}>Login</a></p>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+
+                  <div className="sections-grid">
+                    {topics.map((topic, index) => (
+                      <section id={`section${index + 1}`} key={index}>
+                        <h2>{activeTopic ? activeTopic : topic}</h2>
+                        <iframe
+                          src={activeTopic ? videoURLs[activeTopic] : videoURLs[topic]}
+                          title={topic}
+                          allowFullScreen></iframe>
+                        <p className="video-text">Enjoy our video on {activeTopic ? activeTopic : topic}!</p>
+                        <button onClick={() => handleTopicClick(topic)}>Watch {topic} Video</button>
+                        <Link to={`/page7`}>
+                          <button>More Info</button>
+                        </Link>
+                      </section>
+                    ))}
+                  </div>
+                </main>
+              </div>
+            } />
+            <Route path="/page1" element={<Page1 />} />
+            <Route path="/page2" element={<Page2 />} />
+            <Route path="/page3" element={<Page3 />} />
+            <Route path="/page4" element={<Page4 />} />
+            <Route path="/page5" element={<Page5 />} />
+            <Route path="/page7" component={PageSeven} />
+          </Routes>
+        </div>
+      </div>
+    </Router>
+  );
+};
+
+export default App;
